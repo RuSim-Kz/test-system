@@ -5,15 +5,19 @@ require_once 'config.php';
 header('Content-Type: application/json; charset=utf-8');
 
 try {
-    $redis = getRedisConnection();
     $pdo = getDbConnection();
     
-    // Ключ для блокировки в Redis
-    $lockKey = 'alpha_script_lock';
-    $lockValue = uniqid();
+    // Файловая блокировка вместо Redis
+    $lockFile = '/tmp/alpha_script_lock';
+    $lockHandle = fopen($lockFile, 'w+');
     
-    // Пытаемся установить блокировку на 30 секунд
-    if (!$redis->set($lockKey, $lockValue, ['NX', 'EX' => 30])) {
+    if (!$lockHandle) {
+        throw new Exception("Не удалось создать файл блокировки");
+    }
+    
+    // Пытаемся установить блокировку
+    if (!flock($lockHandle, LOCK_EX | LOCK_NB)) {
+        fclose($lockHandle);
         echo json_encode([
             'success' => false,
             'message' => 'Скрипт уже выполняется'
@@ -54,7 +58,8 @@ try {
     sleep(1);
     
     // Удаляем блокировку
-    $redis->del($lockKey);
+    flock($lockHandle, LOCK_UN);
+    fclose($lockHandle);
     
     echo json_encode([
         'success' => true,
@@ -70,8 +75,9 @@ try {
     
 } catch (Exception $e) {
     // Удаляем блокировку в случае ошибки
-    if (isset($redis) && isset($lockKey)) {
-        $redis->del($lockKey);
+    if (isset($lockHandle)) {
+        flock($lockHandle, LOCK_UN);
+        fclose($lockHandle);
     }
     
     echo json_encode([

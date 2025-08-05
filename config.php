@@ -35,5 +35,4 @@ function getRedisConnection() {
     } catch (Exception $e) {
         die("Ошибка подключения к Redis: " . $e->getMessage());
     }
-}
-?> 
+} 

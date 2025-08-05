@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
 # Устанавливаем PHP расширения
 RUN docker-php-ext-install pdo pdo_pgsql
 
+# Устанавливаем Redis расширение
+RUN pecl install redis && docker-php-ext-enable redis
+
 WORKDIR /app
 
 COPY . .

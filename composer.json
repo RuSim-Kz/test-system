@@ -1,0 +1,11 @@
+{
+  "name": "test-system/app",
+  "description": "Test system with PostgreSQL and PHP",
+  "type": "project",
+  "require": {
+    "php": ">=7.4"
+  },
+  "scripts": {
+    "start": "php -S 0.0.0.0:$PORT"
+  }
+} 

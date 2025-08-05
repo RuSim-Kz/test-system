@@ -1,15 +1,15 @@
 <?php
 // Конфигурация базы данных PostgreSQL
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'your_database_name');
-define('DB_USER', 'your_username');
-define('DB_PASS', 'your_password');
-define('DB_PORT', '5432');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'your_database_name');
+define('DB_USER', getenv('DB_USER') ?: 'your_username');
+define('DB_PASS', getenv('DB_PASSWORD') ?: 'your_password');
+define('DB_PORT', getenv('DB_PORT') ?: '5432');
 
 // Конфигурация Redis
-define('REDIS_HOST', 'localhost');
-define('REDIS_PORT', 6379);
-define('REDIS_PASS', ''); // Если есть пароль
+define('REDIS_HOST', getenv('REDIS_HOST') ?: 'localhost');
+define('REDIS_PORT', getenv('REDIS_PORT') ?: 6379);
+define('REDIS_PASS', getenv('REDIS_PASSWORD') ?: ''); // Если есть пароль
 
 // Функция подключения к PostgreSQL
 function getDbConnection() {
